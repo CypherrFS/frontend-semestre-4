@@ -1,1 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="Dashboard responsivo de productividad creado para el Ejercicio Práctico 1."
+  />
+  <title>FocusBoard | Dashboard de productividad</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header" id="inicio">
+      <nav class="navbar" aria-label="Navegación principal">
+        <a class="brand" href="#inicio" aria-label="FocusBoard, inicio">
+          <span class="brand-mark" aria-hidden="true">F</span>
+          <span>FocusBoard</span>
+        </a>
 
+        <ul class="nav-links">
+          <li><a class="active" href="#dashboard">Dashboard</a></li>
+          <li><a href="#resumen">Resumen</a></li>
+          <li><a href="#recursos">Recursos</a></li>
+        </ul>
+
+        <a class="profile-link" href="#perfil">
+          <span class="profile-avatar" aria-hidden="true">LV</span>
+          <span class="profile-name">Luis Villagran</span>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero-section" id="resumen" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Viernes, 21 de agosto de 2026</p>
+          <h1 id="hero-title">Tu espacio para <span>avanzar</span>.</h1>
+          <p class="hero-description">
+            Organiza tus objetivos, revisa tu progreso y mantén el enfoque en las tareas que hacen la diferencia.
+          </p>
+          <a class="primary-button" href="#dashboard">Ver mi progreso <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="hero-visual" aria-label="Resumen visual de productividad">
+          <div class="orbit orbit-large"></div>
+          <div class="orbit orbit-small"></div>
+          <div class="focus-card">
+            <div class="focus-card-topline">
+              <span class="status-dot"></span>
+              <span>Enfoque semanal</span>
+            </div>
+            <strong>84%</strong>
+            <div class="progress-track" aria-label="84 por ciento completado">
+              <span class="progress-value"></span>
+            </div>
+            <p>+12% frente a la semana anterior</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-section" id="dashboard" aria-labelledby="dashboard-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Panel principal</p>
+            <h2 id="dashboard-title">Todo en un solo lugar</h2>
+          </div>
+          <a class="text-link" href="#recursos">Ver actividad <span aria-hidden="true">↗</span></a>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="dashboard-card card-primary">
+            <div class="card-icon icon-violet" aria-hidden="true">✦</div>
+            <div class="card-content">
+              <div class="card-label-row">
+                <p class="card-label">Objetivo destacado</p>
+                <span class="tag tag-violet">En curso</span>
+              </div>
+              <h3>Dominar CSS Grid</h3>
+              <p>Construye interfaces ordenadas y adaptables para tus próximos proyectos frontend.</p>
+              <div class="card-footer">
+                <div class="mini-progress">
+                  <span class="mini-progress-value progress-violet"></span>
+                </div>
+                <strong>72%</strong>
+              </div>
+            </div>
+          </article>
+
+          <article class="dashboard-card card-secondary">
+            <div class="card-icon icon-orange" aria-hidden="true">✓</div>
+            <div class="card-content">
+              <div class="card-label-row">
+                <p class="card-label">Tareas completadas</p>
+                <span class="tag tag-orange">Esta semana</span>
+              </div>
+              <h3>18 de 24 tareas</h3>
+              <p>Vas por buen camino. Seis tareas más y habrás completado tu meta semanal.</p>
+              <div class="card-footer">
+                <div class="mini-progress">
+                  <span class="mini-progress-value progress-orange"></span>
+                </div>
+                <strong>75%</strong>
+              </div>
+            </div>
+          </article>
+
+          <article class="dashboard-card card-tertiary">
+            <div class="card-icon icon-blue" aria-hidden="true">◷</div>
+            <div class="card-content">
+              <div class="card-label-row">
+                <p class="card-label">Tiempo de enfoque</p>
+                <span class="tag tag-blue">Hoy</span>
+              </div>
+              <h3>4 h 36 min</h3>
+              <p>Tu mejor bloque fue de 9:00 a 11:30. Mantén ese ritmo durante la tarde.</p>
+              <div class="card-footer">
+                <div class="mini-progress">
+                  <span class="mini-progress-value progress-blue"></span>
+                </div>
+                <strong>64%</strong>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="resources-section" id="recursos" aria-labelledby="resources-title">
+        <div class="resource-intro">
+          <p class="eyebrow">Siguiente paso</p>
+          <h2 id="resources-title">Pequeños avances, grandes resultados.</h2>
+        </div>
+        <div class="resource-list">
+          <a class="resource-item" href="#dashboard">
+            <span class="resource-number">01</span>
+            <span>
+              <strong>Revisa tus metas</strong>
+              <small>Actualiza tu objetivo semanal</small>
+            </span>
+            <span class="resource-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="resource-item" href="#dashboard">
+            <span class="resource-number">02</span>
+            <span>
+              <strong>Planifica tu día</strong>
+              <small>Elige tus tres prioridades</small>
+            </span>
+            <span class="resource-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="perfil">
+      <p><span class="footer-mark">F</span> FocusBoard</p>
+      <p>Ejercicio Práctico #1 · Programación Frontend - Semestre 4</p>
+      <p>Diseñado y desarrollado por Luis Villagran</p>
+    </footer>
+  </div>
+</body>
+</html>
