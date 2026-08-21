@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="TaskFlow, una lista de tareas interactiva con filtros y modo oscuro."
+  />
+  <title>TaskFlow | Lista de tareas interactiva</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <nav class="topbar" aria-label="Navegación principal">
+        <a class="brand" href="#inicio" aria-label="TaskFlow, inicio">
+          <span class="brand-icon" aria-hidden="true">✓</span>
+          <span>Task<span class="brand-accent">Flow</span></span>
+        </a>
+
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false">
+          <span class="theme-icon" id="theme-icon" aria-hidden="true">☾</span>
+          <span id="theme-label">Modo oscuro</span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="app-main" id="inicio">
+      <section class="welcome-section" aria-labelledby="welcome-title">
+        <div class="welcome-copy">
+          <p class="eyebrow">Panel personal</p>
+          <h1 id="welcome-title">Convierte tus planes en <span>progreso.</span></h1>
+          <p class="welcome-description">
+            Agrega tus tareas, ordénalas con filtros y avanza un paso a la vez sin recargar la página.
+          </p>
+        </div>
+
+        <div class="progress-summary" aria-label="Resumen de tareas">
+          <div class="summary-ring">
+            <span id="completion-percent">0%</span>
+          </div>
+          <div>
+            <strong id="completed-count">0</strong><span class="summary-total"> / <span id="total-count">0</span></span>
+            <p>tareas completadas</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="task-section" aria-labelledby="task-section-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Tu lista</p>
+            <h2 id="task-section-title">Tareas para hoy</h2>
+          </div>
+          <span class="live-badge"><span class="live-dot"></span>Actualización en vivo</span>
+        </div>
+
+        <form class="task-form" id="task-form">
+          <label class="sr-only" for="task-input">Escribe una nueva tarea</label>
+          <input
+            id="task-input"
+            name="task"
+            type="text"
+            maxlength="100"
+            placeholder="¿Qué quieres lograr hoy?"
+            autocomplete="off"
+            required
+          />
+          <button class="add-button" type="submit">
+            <span aria-hidden="true">+</span>
+            Agregar
+          </button>
+        </form>
+
+        <div class="task-toolbar">
+          <div class="filter-group" role="group" aria-label="Filtrar tareas">
+            <button class="filter-button active" type="button" data-filter="all">Todas <span id="all-count">0</span></button>
+            <button class="filter-button" type="button" data-filter="pending">Pendientes <span id="pending-count">0</span></button>
+            <button class="filter-button" type="button" data-filter="completed">Completadas <span id="completed-filter-count">0</span></button>
+          </div>
+
+          <label class="search-box" for="search-input">
+            <span aria-hidden="true">⌕</span>
+            <span class="sr-only">Buscar tareas</span>
+            <input id="search-input" type="search" placeholder="Buscar" autocomplete="off" />
+          </label>
+        </div>
+
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon" aria-hidden="true">✦</div>
+          <h3 id="empty-title">Tu lista está lista para comenzar</h3>
+          <p id="empty-description">Agrega tu primera tarea y observa cómo toma forma tu día.</p>
+        </div>
+
+        <ul class="task-list" id="task-list" aria-live="polite" aria-label="Tareas agregadas"></ul>
+      </section>
+
+      <section class="tip-section" aria-labelledby="tip-title">
+        <div class="tip-icon" aria-hidden="true">⌁</div>
+        <div>
+          <p class="eyebrow">Consejo de enfoque</p>
+          <h2 id="tip-title">Empieza por lo importante.</h2>
+          <p>Divide las tareas grandes en acciones pequeñas y celebra cada avance.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p><span class="footer-mark">TF</span> TaskFlow</p>
+      <p>Ejercicio Práctico #2 · Programación Frontend - Semestre 4</p>
+      <p>Diseñado por Luis Villagran</p>
+    </footer>
+  </div>
+</body>
+</html>
