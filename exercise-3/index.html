@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="Pokédex dinámica creada con JavaScript y consumo de la Pokémon API."
+  />
+  <title>PokéAtlas | Pokémon API</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <nav class="navbar" aria-label="Navegación principal">
+        <a class="brand" href="#inicio" aria-label="PokéAtlas, inicio">
+          <span class="brand-ball" aria-hidden="true"><span></span></span>
+          <span>Poké<span>Atlas</span></span>
+        </a>
+        <div class="api-status" aria-label="Fuente de datos">
+          <span class="status-pulse" aria-hidden="true"></span>
+          Datos en tiempo real
+        </div>
+      </nav>
+    </header>
+
+    <main id="inicio">
+      <section class="hero-section" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Explorador de especies · API pública</p>
+          <h1 id="page-title">Conoce tu próximo <span>compañero.</span></h1>
+          <p class="hero-description">
+            Una colección dinámica de Pokémon cargada directamente desde la Pokémon API. Descubre sus tipos, medidas y estadísticas principales.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-link" href="#catalogo">Explorar colección <span aria-hidden="true">↓</span></a>
+            <span class="hero-note"><strong id="hero-count">12</strong> especies en esta vista</span>
+          </div>
+        </div>
+        <div class="hero-orbit" aria-hidden="true">
+          <div class="orbit orbit-one"></div>
+          <div class="orbit orbit-two"></div>
+          <div class="hero-pokeball"><span></span></div>
+          <span class="spark spark-one">✦</span>
+          <span class="spark spark-two">✧</span>
+          <span class="spark spark-three">•</span>
+        </div>
+      </section>
+
+      <section class="catalog-section" id="catalogo" aria-labelledby="catalog-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">La colección</p>
+            <h2 id="catalog-title">Primeras 12 especies</h2>
+          </div>
+          <button class="refresh-button" id="refresh-button" type="button">
+            <span aria-hidden="true">↻</span>
+            Actualizar
+          </button>
+        </div>
+
+        <div class="loading-state" id="loading-state" role="status" aria-live="polite">
+          <div class="loading-spinner" aria-hidden="true"></div>
+          <h3>Cargando datos...</h3>
+          <p>Estamos consultando la PokéAPI para preparar tu colección.</p>
+        </div>
+
+        <div class="error-state" id="error-state" role="alert" hidden>
+          <div class="error-icon" aria-hidden="true">!</div>
+          <h3>No pudimos cargar la colección</h3>
+          <p id="error-message">Ocurrió un problema al conectar con la API.</p>
+          <button class="primary-button" id="retry-button" type="button">Intentar de nuevo</button>
+        </div>
+
+        <div class="pokemon-grid" id="pokemon-grid" aria-live="polite" aria-label="Tarjetas de Pokémon"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p><span class="footer-mark">PA</span> PokéAtlas</p>
+      <p>Ejercicio Práctico #3 · Programación Frontend - Semestre 4</p>
+      <p>Fuente: <a href="https://pokeapi.co/" target="_blank" rel="noreferrer">PokéAPI</a></p>
+    </footer>
+  </div>
+</body>
+</html>
