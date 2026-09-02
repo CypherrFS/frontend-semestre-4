@@ -409,3 +409,11 @@ body:not([data-theme="dark"]) .icon-moon { display: block; }
   text-decoration: none;
   font-weight: 600;
 }
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-muted);
+  font-size: 1.25rem;
+}
