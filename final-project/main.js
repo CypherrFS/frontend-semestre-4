@@ -1,145 +1,177 @@
-// Configuración de la API
-const API_URL = 'https://rickandmortyapi.com/api/character';
+// Estado global de la aplicación
+let characters = [];
+let favorites = JSON.parse(localStorage.getItem('rm_favs')) || [];
+let showOnlyFavorites = false;
+let searchTerm = '';
+let selectedStatus = '';
 
 // Elementos del DOM
-const themeToggle = document.querySelector('#theme-toggle');
-const body = document.body;
-const searchInput = document.querySelector('#search-input');
-const statusFilter = document.querySelector('#status-filter');
-const charactersGrid = document.querySelector('#characters-grid');
-const loadingSpinner = document.querySelector('#loading-spinner');
-const errorMessage = document.querySelector('#error-message');
-const retryBtn = document.querySelector('#retry-btn');
-const resultsCount = document.querySelector('#results-count');
-const favCountBadge = document.querySelector('#fav-count');
+const grid = document.getElementById('characters-grid');
+const loading = document.getElementById('loading');
+const errorMsg = document.getElementById('error');
+const noResults = document.getElementById('no-results');
+const searchInput = document.getElementById('search-input');
+const statusFilter = document.getElementById('status-filter');
+const btnShowFavs = document.getElementById('btn-show-favs');
+const favCountSpan = document.getElementById('fav-count');
+const themeToggle = document.getElementById('theme-toggle');
+const modal = document.getElementById('detail-modal');
+const modalBody = document.getElementById('modal-body');
+const modalClose = document.getElementById('modal-close');
+const modalBackdrop = document.getElementById('modal-backdrop');
 
-// Estado Global de la App
-let allCharacters = [];
-let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-
-// --- GESTIÓN DEL TEMA ---
-const initTheme = () => {
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  if (savedTheme === 'dark') {
-    body.setAttribute('data-theme', 'dark');
-  }
-};
-
-themeToggle.addEventListener('click', () => {
-  if (body.getAttribute('data-theme') === 'dark') {
-    body.removeAttribute('data-theme');
-    localStorage.setItem('theme', 'light');
-  } else {
-    body.setAttribute('data-theme', 'dark');
-    localStorage.setItem('theme', 'dark');
-  }
+// --- 1. INICIALIZACIÓN ---
+document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  updateFavBadge();
+  fetchCharacters();
 });
 
-// --- GESTIÓN DE FAVORITOS (Base para Fase 3) ---
-const updateFavBadge = () => {
-  favCountBadge.textContent = favorites.length;
-};
+// --- 2. CONSUMO DE API (FETCH) ---
+async function fetchCharacters() {
+  try {
+    loading.classList.remove('hidden');
+    const response = await fetch('https://rickandmortyapi.com/api/character');
+    if (!response.ok) throw new Error('Error en el servidor');
+    
+    const data = await response.json();
+    characters = data.results;
+    render();
+  } catch (err) {
+    console.error(err);
+    errorMsg.classList.remove('hidden');
+  } finally {
+    loading.classList.add('hidden');
+  }
+}
 
-const isFavorite = (id) => favorites.includes(id);
+// --- 3. FILTRADO Y RENDERIZADO REACTIVO ---
+function render() {
+  let filtered = characters.filter(c => {
+    const matchesName = c.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = selectedStatus === '' || c.status.toLowerCase() === selectedStatus.toLowerCase();
+    const matchesFav = !showOnlyFavorites || favorites.includes(c.id);
+    return matchesName && matchesStatus && matchesFav;
+  });
 
-const toggleFavorite = (id, event) => {
-  event.stopPropagation(); // Evita abrir el modal al hacer clic en favoritos
-  const index = favorites.indexOf(id);
-  if (index > -1) {
-    favorites.splice(index, 1);
+  grid.innerHTML = '';
+
+  if (filtered.length === 0) {
+    noResults.classList.remove('hidden');
+  } else {
+    noResults.classList.add('hidden');
+    filtered.forEach(c => {
+      const isFav = favorites.includes(c.id);
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML = `
+        <img src="${c.image}" alt="${c.name}" loading="lazy" onclick="openDetails(${c.id})">
+        <div class="card-body">
+          <h2 class="card-title" onclick="openDetails(${c.id})">${c.name}</h2>
+          <p class="card-info"><strong>Estado:</strong> ${c.status}</p>
+          <p class="card-info"><strong>Especie:</strong> ${c.species}</p>
+          <div class="card-actions">
+            <button class="btn-detail" onclick="openDetails(${c.id})">Detalles</button>
+            <button 
+              class="btn-fav" 
+              onclick="toggleFavorite(${c.id})" 
+              aria-label="Marcar como favorito"
+              aria-pressed="${isFav}">
+              ${isFav ? '❤️' : '🤍'}
+            </button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+}
+
+// --- 4. GESTIÓN DE FAVORITOS (localStorage) ---
+window.toggleFavorite = function(id) {
+  if (favorites.includes(id)) {
+    favorites = favorites.filter(favId => favId !== id);
   } else {
     favorites.push(id);
   }
-  localStorage.setItem('favorites', JSON.stringify(favorites));
+  localStorage.setItem('rm_favs', JSON.stringify(favorites));
   updateFavBadge();
-  renderCharacters(getFilteredCharacters());
+  render();
 };
 
-// --- CONSUMO DE API ---
-const fetchCharacters = async () => {
-  showLoading(true);
-  errorMessage.hidden = true;
-  
-  try {
-    const response = await fetch(API_URL);
-    if (!response.ok) throw new Error('Error en la conexión');
-    
-    const data = await response.json();
-    allCharacters = data.results;
-    renderCharacters(allCharacters);
-  } catch (err) {
-    console.error(err);
-    errorMessage.hidden = false;
-  } finally {
-    showLoading(false);
+function updateFavBadge() {
+  favCountSpan.textContent = favorites.length;
+}
+
+// --- 5. BÚSQUEDA CON PATRÓN DEBOUNCE Y FILTROS ---
+let debounceTimer;
+searchInput.addEventListener('input', (e) => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    searchTerm = e.target.value;
+    render();
+  }, 250);
+});
+
+statusFilter.addEventListener('change', (e) => {
+  selectedStatus = e.target.value;
+  render();
+});
+
+btnShowFavs.addEventListener('click', () => {
+  showOnlyFavorites = !showOnlyFavorites;
+  btnShowFavs.classList.toggle('active', showOnlyFavorites);
+  btnShowFavs.textContent = showOnlyFavorites ? 'Ver Todos' : 'Ver Solo Favoritos';
+  render();
+});
+
+// --- 6. MODAL DE DETALLE Y ACCESIBILIDAD (A11y) ---
+window.openDetails = function(id) {
+  const item = characters.find(c => c.id === id);
+  if (!item) return;
+
+  modalBody.innerHTML = `
+    <div style="text-align: center; margin-bottom: 1rem;">
+      <img src="${item.image}" alt="${item.name}" style="border-radius: 50%; width: 120px; height: 120px; object-fit: cover;">
+      <h2 style="margin-top: 0.5rem;">${item.name}</h2>
+    </div>
+    <p><strong>Estado:</strong> ${item.status}</p>
+    <p><strong>Género:</strong> ${item.gender}</p>
+    <p><strong>Origen:</strong> ${item.origin.name}</p>
+    <p><strong>Última ubicación:</strong> ${item.location.name}</p>
+    <p><strong>Episodios:</strong> ${item.episode.length} apariciones</p>
+  `;
+
+  modal.classList.remove('hidden');
+  modal.setAttribute('aria-hidden', 'false');
+};
+
+function closeModal() {
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden', 'true');
+}
+
+modalClose.addEventListener('click', closeModal);
+modalBackdrop.addEventListener('click', closeModal);
+
+// Cerrar con tecla Escape (A11y)
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+    closeModal();
   }
-};
+});
 
-const showLoading = (isLoading) => {
-  loadingSpinner.hidden = !isLoading;
-  charactersGrid.hidden = isLoading;
-};
+// --- 7. SISTEMA DE TEMA OSCURO / CLARO ---
+function initTheme() {
+  const savedTheme = localStorage.getItem('rm_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+}
 
-// --- RENDERIZADO ---
-const renderCharacters = (characters) => {
-  charactersGrid.innerHTML = '';
-  resultsCount.textContent = `${characters.length} personajes`;
-  
-  if (characters.length === 0) {
-    charactersGrid.innerHTML = '<p class="no-results">No se encontraron personajes en esta dimensión.</p>';
-    return;
-  }
-
-  characters.forEach(char => {
-    const card = document.createElement('div');
-    card.className = 'char-card';
-    card.innerHTML = `
-      <button class="fav-btn ${isFavorite(char.id) ? 'active' : ''}" onclick="toggleFavorite(${char.id}, event)">
-        ${isFavorite(char.id) ? '❤️' : '🤍'}
-      </button>
-      <img src="${char.image}" alt="${char.name}" class="char-img" loading="lazy">
-      <div class="char-info">
-        <h3 class="char-name">${char.name}</h3>
-        <div class="char-status">
-          <span class="status-dot status-${char.status.toLowerCase()}"></span>
-          ${char.status} - ${char.species}
-        </div>
-      </div>
-    `;
-    
-    // Evento para Fase 3 (Modal)
-    card.addEventListener('click', () => console.log('Click en:', char.name));
-    
-    charactersGrid.appendChild(card);
-  });
-};
-
-// --- FILTRADO EN VIVO ---
-const getFilteredCharacters = () => {
-  const query = searchInput.value.toLowerCase();
-  const status = statusFilter.value.toLowerCase();
-  
-  return allCharacters.filter(char => {
-    const matchesSearch = char.name.toLowerCase().includes(query);
-    const matchesStatus = status === '' || char.status.toLowerCase() === status;
-    return matchesSearch && matchesStatus;
-  });
-};
-
-const handleFilter = () => {
-  const filtered = getFilteredCharacters();
-  renderCharacters(filtered);
-};
-
-// Event Listeners
-searchInput.addEventListener('input', handleFilter);
-statusFilter.addEventListener('change', handleFilter);
-retryBtn.addEventListener('click', fetchCharacters);
-
-// Inicialización
-initTheme();
-updateFavBadge();
-fetchCharacters();
-
-// Exponer funciones globales para el onclick del HTML generado
-window.toggleFavorite = toggleFavorite;
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('rm_theme', next);
+  themeToggle.textContent = next === 'dark' ? '☀️' : '🌙';
+});
